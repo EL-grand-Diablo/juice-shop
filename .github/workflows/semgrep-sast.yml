@@ -1,0 +1,39 @@
+name: Semgrep SAST Scan
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  semgrep:
+    name: Run Semgrep SAST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep scan and log results
+        run: |
+          echo "========================================="
+          echo "   SEMGREP SAST SCAN RESULTS"
+          echo "========================================="
+          semgrep scan \
+            --config p/javascript \
+            --config p/typescript \
+            --config p/nodejs \
+            --config p/owasp-top-ten \
+            --no-error \
+            . 2>&1
+          echo "========================================="
+          echo "        SCAN COMPLETE"
+          echo "========================================="
